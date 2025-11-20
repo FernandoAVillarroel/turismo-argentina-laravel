@@ -1,59 +1,92 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+🌍 Turismo Argentina – Sistema de Gestión Turística
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Aplicación web moderna diseñada para gestionar destinos, paquetes turísticos y reservas dentro de Argentina, combinando un backend robusto con un frontend dinámico.
 
-## About Laravel
+🚀 Funcionalidades Principales
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+🌐 API REST completamente desarrollada con Laravel
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+📌 CRUD de Destinos Turísticos (Cataratas, Perito Moreno, etc.)
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+🧳 Gestión de Paquetes con precios, detalles y disponibilidad
 
-## Learning Laravel
+📆 Sistema de Reservas con validaciones
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+🖼️ Galería de Imágenes por destino
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+⭐ Sistema de Comentarios y Reseñas
 
-## Laravel Sponsors
+🗂️ Categorización por tipo de experiencia (Aventura, Cultural, Gastronomía, etc.)
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+🛠️ Tecnologías Utilizadas
+🔧 Backend – API REST con Laravel
 
-### Premium Partners
+Laravel 11 – Framework PHP moderno y escalable
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+MySQL – Base de datos relacional
 
-## Contributing
+Eloquent ORM – Manejo de modelos y relaciones
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+API RESTful – Arquitectura limpia para consumo desde frontend o apps externas
 
-## Code of Conduct
+🎨 Frontend – SPA con Vue.js (en desarrollo)
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+JavaScript ES6+ / Vue.js 3 – Framework progresivo orientado a componentes
 
-## Security Vulnerabilities
+Axios – Cliente HTTP para consumir la API
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+Vue Router – Navegación entre vistas y rutas dinámicas
 
-## License
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+📁 Estructura General del Proyecto
+
+turismo-app/
+├── app/
+│   ├── Http/Controllers/      # Controladores API
+│   └── Models/                # Modelos Eloquent
+├── database/
+│   ├── migrations/            # Migraciones
+│   └── seeders/               # Datos de prueba
+└── routes/
+    └── api.php                # Rutas REST
+
+
+🗄️ Modelo de Base de Datos
+
+destinations – Destinos turísticos
+
+categories – Categorías de experiencias
+
+packages – Paquetes turísticos
+
+bookings – Reservas
+
+reviews – Reseñas y valoraciones
+
+destinations_images – Galería de imágenes
+
+🔌 Endpoints de la API (Resumen)
+🌍 Destinos
+GET    /api/destinos
+GET    /api/destinos/{id}
+POST   /api/destinos
+PUT    /api/destinos/{id}
+DELETE /api/destinos/{id}
+
+🗂️ Categorías
+GET    /api/categorias
+POST   /api/categorias
+PUT    /api/categorias/{id}
+DELETE /api/categorias/{id}
+
+
+👨‍💻 Autor
+
+Fernando Villarroel
+📍 Santiago del Estero, Argentina
+🔗 GitHub: @FernandoAVillarroel
+
+📝 Licencia
+
+Proyecto de código abierto, desarrollado con fines educativos y de portfolio.
+Año 2024/2025
