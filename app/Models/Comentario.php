@@ -9,22 +9,34 @@ class Comentario extends Model
     protected $table = 'reviews';
 
     protected $fillable = [
-        'destination_id',
         'user_id',
+        'package_id',
         'rating',
+        'title',
         'comment',
-        'is_approved'
+        'photos',
+        'is_verified',
+        'is_approved',
+        'helpful_count'
     ];
 
-    // Relación: Un comentario pertenece a un destino
-    public function destino()
+    protected $casts = [
+        'rating' => 'integer',
+        'photos' => 'array',
+        'is_verified' => 'boolean',
+        'is_approved' => 'boolean',
+        'helpful_count' => 'integer'
+    ];
+
+    // Relación: Un comentario pertenece a un paquete
+    public function paquete()
     {
-        return $this->belongsTo(Destino::class, 'destination_id');
+        return $this->belongsTo(Paquete::class, 'package_id');
     }
 
     // Relación: Un comentario pertenece a un usuario
-    public function user()
+    public function usuario()
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class, 'user_id');
     }
 }

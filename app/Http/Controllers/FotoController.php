@@ -2,80 +2,162 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Controllers\Controller;
 use App\Models\Foto;
 use Illuminate\Http\Request;
+use Illuminate\Http\JsonResponse;
 
 class FotoController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * Listar todas las fotos
      */
-    public function index()
+    public function index(): JsonResponse
     {
-        // Obtener todas las fotos de la base de datos
-        $fotos = Foto::all();
-        
-        // Devolver las fotos como JSON
-        return response()->json($fotos);
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        //
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        // Buscar la foto por ID
-        $foto = Foto::find($id);
-        
-        // Si no existe, devolver error 404
-        if (!$foto) {
+        try {
+            $fotos = Foto::with('destino')->orderBy('order')->get();
+            
             return response()->json([
-                'error' => 'Foto no encontrada'
-            ], 404);
+                'success' => true,
+                'data' => $fotos
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error al obtener las fotos',
+                'error' => $e->getMessage()
+            ], 500);
         }
-        
-        // Si existe, devolverla como JSON
-        return response()->json($foto);
     }
 
     /**
-     * Show the form for editing the specified resource.
+     * Crear una nueva foto
      */
-    public function edit(string $id)
+    public function store(Request $request): JsonResponse
     {
-        //
+        try {
+            $validated = $request->validate([
+                'destination_id' => 'required|exists:destination,id',
+                'image_path' => 'required|string|max:255',
+                'caption' => 'nullable|string|max:255',
+                'order' => 'nullable|integer|min:0'
+            ]);
+
+            $foto = Foto::create($validated);
+            $foto->load('destino');
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Foto creada exitosamente',
+                'data' => $foto
+            ], 201);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error de validación',
+                'errors' => $e->errors()
+            ], 422);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error al crear la foto',
+                'error' => $e->getMessage()
+            ], 500);
+        }
     }
 
     /**
-     * Update the specified resource in storage.
+     * Mostrar una foto específica
      */
-    public function update(Request $request, string $id)
+    public function show(string $id): JsonResponse
     {
-        //
+        try {
+            $foto = Foto::with('destino')->findOrFail($id);
+
+            return response()->json([
+                'success' => true,
+                'data' => $foto
+            ], 200);
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Foto no encontrada'
+            ], 404);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error al obtener la foto',
+                'error' => $e->getMessage()
+            ], 500);
+        }
     }
 
     /**
-     * Remove the specified resource from storage.
+     * Actualizar una foto
      */
-    public function destroy(string $id)
+    public function update(Request $request, string $id): JsonResponse
     {
-        //
+        try {
+            $foto = Foto::findOrFail($id);
+
+            $validated = $request->validate([
+                'destination_id' => 'sometimes|required|exists:destination,id',
+                'image_path' => 'sometimes|required|string|max:255',
+                'caption' => 'nullable|string|max:255',
+                'order' => 'nullable|integer|min:0'
+            ]);
+
+            $foto->update($validated);
+            $foto->load('destino');
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Foto actualizada exitosamente',
+                'data' => $foto
+            ], 200);
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Foto no encontrada'
+            ], 404);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error de validación',
+                'errors' => $e->errors()
+            ], 422);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error al actualizar la foto',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
+     * Eliminar una foto
+     */
+    public function destroy(string $id): JsonResponse
+    {
+        try {
+            $foto = Foto::findOrFail($id);
+            $foto->delete();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Foto eliminada exitosamente'
+            ], 200);
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Foto no encontrada'
+            ], 404);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error al eliminar la foto',
+                'error' => $e->getMessage()
+            ], 500);
+        }
     }
 }

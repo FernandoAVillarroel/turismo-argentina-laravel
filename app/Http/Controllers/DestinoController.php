@@ -2,138 +2,195 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Controllers\Controller;
 use App\Models\Destino;
 use Illuminate\Http\Request;
+use Illuminate\Http\JsonResponse;
 
 class DestinoController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * Listar todos los destinos
      */
-    public function index()
+    public function index(): JsonResponse
     {
-        // Obtener todos los destinos de la base de datos
-        $destinos = Destino::all();
-        
-        // Devolver los destinos como JSON (para que Vue.js lo use)
-        return response()->json($destinos);
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        // Validar los datos que llegan
-        $validatedData = $request->validate([
-            'name' => 'required|string|max:255',
-            'slug' => 'required|string|unique:destination,slug',
-            'country' => 'required|string|max:100',
-            'city' => 'required|string|max:100',
-            'description' => 'required|string',
-            'short_description' => 'nullable|string|max:500',
-            'best_time_to_visit' => 'nullable|string',
-            'is_active' => 'boolean',
-        ]);
-
-        // Crear el nuevo destino en la base de datos
-        $destino = Destino::create($validatedData);
-
-        // Devolver el destino creado con código 201 (Created)
-        return response()->json($destino, 201);
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        // Buscar el destino por ID
-        $destino = Destino::find($id);
-        
-        // Si no existe, devolver error 404
-        if (!$destino) {
+        try {
+            $destinos = Destino::with(['fotos', 'paquetes'])
+                ->get();
+            
             return response()->json([
-                'error' => 'Destino no encontrado'
-            ], 404);
-        }
-        
-        // Si existe, devolverlo como JSON
-        return response()->json($destino);
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
-    {
-        // Buscar el destino por ID
-        $destino = Destino::find($id);
-
-        // Si no existe, devolver error 404
-        if (!$destino) {
+                'success' => true,
+                'data' => $destinos
+            ], 200);
+        } catch (\Exception $e) {
             return response()->json([
-                'error' => 'Destino no encontrado'
-            ], 404);
+                'success' => false,
+                'message' => 'Error al obtener los destinos',
+                'error' => $e->getMessage()
+            ], 500);
         }
-
-        // Validar los datos que llegan
-        $validatedData = $request->validate([
-            'name' => 'sometimes|required|string|max:255',
-            'slug' => 'sometimes|required|string|unique:destination,slug,' . $id,
-            'country' => 'sometimes|required|string|max:100',
-            'city' => 'sometimes|required|string|max:100',
-            'description' => 'sometimes|required|string',
-            'short_description' => 'nullable|string|max:500',
-            'best_time_to_visit' => 'nullable|string',
-            'is_active' => 'boolean',
-        ]);
-
-        // Actualizar el destino
-        $destino->update($validatedData);
-
-        // Devolver el destino actualizado
-        return response()->json($destino);
     }
 
     /**
-     * Remove the specified resource from storage.
+     * Crear un nuevo destino
      */
-    public function destroy(string $id)
+    public function store(Request $request): JsonResponse
     {
-        // Buscar el destino por ID
-        $destino = Destino::find($id);
+        try {
+            $validated = $request->validate([
+                'name' => 'required|string|max:255',
+                'slug' => 'nullable|string|max:255|unique:destination,slug',
+                'country' => 'required|string|max:100',
+                'city' => 'required|string|max:100',
+                'description' => 'required|string',
+                'short_description' => 'nullable|string|max:500',
+                'featured_image' => 'nullable|string|max:255',
+                'gallery' => 'nullable|array',
+                'highlights' => 'nullable|array',
+                'best_time_to_visit' => 'nullable|string|max:100',
+                'is_active' => 'boolean'
+            ]);
 
-        // Si no existe, devolver error 404
-        if (!$destino) {
+            // Auto-generar slug si no se proporciona
+            if (empty($validated['slug'])) {
+                $validated['slug'] = \Illuminate\Support\Str::slug($validated['name']);
+            }
+
+            $destino = Destino::create($validated);
+
             return response()->json([
-                'error' => 'Destino no encontrado'
-            ], 404);
+                'success' => true,
+                'message' => 'Destino creado exitosamente',
+                'data' => $destino
+            ], 201);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error de validación',
+                'errors' => $e->errors()
+            ], 422);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error al crear el destino',
+                'error' => $e->getMessage()
+            ], 500);
         }
-
-        // Eliminar el destino
-        $destino->delete();
-
-        // Devolver respuesta exitosa sin contenido (204)
-        return response()->json([
-            'message' => 'Destino eliminado exitosamente'
-        ], 200);
     }
-}    
+
+    /**
+     * Mostrar un destino específico
+     */
+    public function show(string $id): JsonResponse
+    {
+        try {
+           $destino = Destino::with(['fotos', 'paquetes.comentarios'])
+                ->findOrFail($id);
+
+            return response()->json([
+                'success' => true,
+                'data' => $destino
+            ], 200);
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Destino no encontrado'
+            ], 404);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error al obtener el destino',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
+     * Actualizar un destino
+     */
+    public function update(Request $request, string $id): JsonResponse
+    {
+        try {
+            $destino = Destino::findOrFail($id);
+
+            $validated = $request->validate([
+                'name' => 'sometimes|required|string|max:255',
+                'slug' => 'sometimes|nullable|string|max:255|unique:destination,slug,' . $id,
+                'country' => 'sometimes|required|string|max:100',
+                'city' => 'sometimes|required|string|max:100',
+                'description' => 'sometimes|required|string',
+                'short_description' => 'nullable|string|max:500',
+                'featured_image' => 'nullable|string|max:255',
+                'gallery' => 'nullable|array',
+                'highlights' => 'nullable|array',
+                'best_time_to_visit' => 'nullable|string|max:100',
+                'is_active' => 'boolean'
+            ]);
+
+            // Auto-generar slug si se actualiza el nombre
+            if (isset($validated['name']) && !isset($validated['slug'])) {
+                $validated['slug'] = \Illuminate\Support\Str::slug($validated['name']);
+            }
+
+            $destino->update($validated);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Destino actualizado exitosamente',
+                'data' => $destino
+            ], 200);
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Destino no encontrado'
+            ], 404);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error de validación',
+                'errors' => $e->errors()
+            ], 422);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error al actualizar el destino',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
+     * Eliminar un destino
+     */
+    public function destroy(string $id): JsonResponse
+    {
+        try {
+            $destino = Destino::findOrFail($id);
+            
+            // Verificar si tiene paquetes asociados
+            if ($destino->paquetes()->count() > 0) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'No se puede eliminar el destino porque tiene paquetes turísticos asociados'
+                ], 409);
+            }
+
+            $destino->delete();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Destino eliminado exitosamente'
+            ], 200);
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Destino no encontrado'
+            ], 404);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error al eliminar el destino',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+}

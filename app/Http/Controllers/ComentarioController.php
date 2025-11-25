@@ -2,80 +2,171 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Controllers\Controller;
 use App\Models\Comentario;
 use Illuminate\Http\Request;
+use Illuminate\Http\JsonResponse;
 
 class ComentarioController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * Listar todos los comentarios
      */
-    public function index()
+    public function index(): JsonResponse
     {
-        // Obtener todos los comentarios de la base de datos
-        $comentarios = Comentario::all();
-        
-        // Devolver los comentarios como JSON
-        return response()->json($comentarios);
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        //
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        // Buscar el comentario por ID
-        $comentario = Comentario::find($id);
-        
-        // Si no existe, devolver error 404
-        if (!$comentario) {
+        try {
+            $comentarios = Comentario::with(['paquete.destino', 'usuario'])->get();
+            
             return response()->json([
-                'error' => 'Comentario no encontrado'
-            ], 404);
+                'success' => true,
+                'data' => $comentarios
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error al obtener los comentarios',
+                'error' => $e->getMessage()
+            ], 500);
         }
-        
-        // Si existe, devolverlo como JSON
-        return response()->json($comentario);
     }
 
     /**
-     * Show the form for editing the specified resource.
+     * Crear un nuevo comentario
      */
-    public function edit(string $id)
+    public function store(Request $request): JsonResponse
     {
-        //
+        try {
+            $validated = $request->validate([
+                'user_id' => 'required|exists:users,id',
+                'package_id' => 'required|exists:packages,id',
+                'rating' => 'required|integer|min:1|max:5',
+                'title' => 'nullable|string|max:255',
+                'comment' => 'required|string',
+                'photos' => 'nullable|array',
+                'is_verified' => 'boolean',
+                'is_approved' => 'boolean'
+            ]);
+
+            $comentario = Comentario::create($validated);
+            $comentario->load(['paquete', 'usuario']);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Comentario creado exitosamente',
+                'data' => $comentario
+            ], 201);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error de validación',
+                'errors' => $e->errors()
+            ], 422);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error al crear el comentario',
+                'error' => $e->getMessage()
+            ], 500);
+        }
     }
 
     /**
-     * Update the specified resource in storage.
+     * Mostrar un comentario específico
      */
-    public function update(Request $request, string $id)
+    public function show(string $id): JsonResponse
     {
-        //
+        try {
+            $comentario = Comentario::with(['paquete.destino', 'usuario'])->findOrFail($id);
+
+            return response()->json([
+                'success' => true,
+                'data' => $comentario
+            ], 200);
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Comentario no encontrado'
+            ], 404);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error al obtener el comentario',
+                'error' => $e->getMessage()
+            ], 500);
+        }
     }
 
     /**
-     * Remove the specified resource from storage.
+     * Actualizar un comentario
      */
-    public function destroy(string $id)
+    public function update(Request $request, string $id): JsonResponse
     {
-        //
+        try {
+            $comentario = Comentario::findOrFail($id);
+
+            $validated = $request->validate([
+                'user_id' => 'sometimes|required|exists:users,id',
+                'package_id' => 'sometimes|required|exists:packages,id',
+                'rating' => 'sometimes|required|integer|min:1|max:5',
+                'title' => 'nullable|string|max:255',
+                'comment' => 'sometimes|required|string',
+                'photos' => 'nullable|array',
+                'is_verified' => 'boolean',
+                'is_approved' => 'boolean',
+                'helpful_count' => 'nullable|integer|min:0'
+            ]);
+
+            $comentario->update($validated);
+            $comentario->load(['paquete', 'usuario']);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Comentario actualizado exitosamente',
+                'data' => $comentario
+            ], 200);
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Comentario no encontrado'
+            ], 404);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error de validación',
+                'errors' => $e->errors()
+            ], 422);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error al actualizar el comentario',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
+     * Eliminar un comentario
+     */
+    public function destroy(string $id): JsonResponse
+    {
+        try {
+            $comentario = Comentario::findOrFail($id);
+            $comentario->delete();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Comentario eliminado exitosamente'
+            ], 200);
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Comentario no encontrado'
+            ], 404);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error al eliminar el comentario',
+                'error' => $e->getMessage()
+            ], 500);
+        }
     }
 }

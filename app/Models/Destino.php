@@ -22,6 +22,12 @@ class Destino extends Model
         'is_active'
     ];
 
+    protected $casts = [
+        'gallery' => 'array',
+        'highlights' => 'array',
+        'is_active' => 'boolean'
+    ];
+
     // Relación: Un destino tiene muchos paquetes
     public function paquetes()
     {
@@ -32,11 +38,5 @@ class Destino extends Model
     public function fotos()
     {
         return $this->hasMany(Foto::class, 'destination_id');
-    }
-
-    // Relación: Un destino tiene muchos comentarios (reviews)
-    public function comentarios()
-    {
-        return $this->hasMany(Comentario::class, 'destination_id');
     }
 }

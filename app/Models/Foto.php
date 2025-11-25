@@ -10,10 +10,13 @@ class Foto extends Model
 
     protected $fillable = [
         'destination_id',
-        'image_url',
+        'image_path',
         'caption',
-        'is_primary',
-        'sort_order'
+        'order'
+    ];
+
+    protected $casts = [
+        'order' => 'integer'
     ];
 
     // Relación: Una foto pertenece a un destino
