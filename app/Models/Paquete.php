@@ -28,6 +28,16 @@ class Paquete extends Model
         'is_active'
     ];
 
+    protected $casts = [
+        'included_services' => 'array',
+        'excluded_services' => 'array',
+        'itinerary' => 'array',
+        'price' => 'decimal:2',
+        'discount_price' => 'decimal:2',
+        'is_featured' => 'boolean',
+        'is_active' => 'boolean'
+    ];
+
     // Relación: Un paquete pertenece a un destino
     public function destino()
     {
@@ -44,5 +54,11 @@ class Paquete extends Model
     public function reservas()
     {
         return $this->hasMany(Reserva::class, 'package_id');
+    }
+
+    // Relación: Un paquete tiene muchos comentarios/reviews
+    public function comentarios()
+    {
+        return $this->hasMany(Comentario::class, 'package_id');
     }
 }

@@ -8,16 +8,22 @@ class Categoria extends Model
 {
     protected $table = 'categories';
 
-    // Cambiar a inglés
     protected $fillable = [
-        'name',        // ← Cambió de 'nombre'
+        'name',
         'slug',
         'icon',
-        'description'  // ← Cambió de 'descripcion'
+        'description'
     ];
 
+    // Relación: Una categoría tiene muchos paquetes
     public function paquetes()
     {
-        return $this->hasMany(Paquete::class, 'categoria_id');
+        return $this->hasMany(Paquete::class, 'category_id');
+    }
+
+    // Relación: Una categoría tiene muchos destinos (si destination tiene category_id)
+    public function destinos()
+    {
+        return $this->hasMany(Destino::class, 'category_id');
     }
 }

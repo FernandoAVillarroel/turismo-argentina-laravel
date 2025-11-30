@@ -24,7 +24,7 @@ class CategoriaController extends Controller
     public function store(Request $request)
     {
         $validatedData = $request->validate([
-            'name' => 'required|string|max:255|unique:categories,name',  // ← Cambió
+            'name' => 'required|string|max:255|unique:categories,name',  
             'slug' => 'nullable|string|max:255',
             'icon' => 'nullable|string|max:255',
             'description' => 'nullable|string'

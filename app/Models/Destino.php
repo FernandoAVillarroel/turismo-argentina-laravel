@@ -6,9 +6,10 @@ use Illuminate\Database\Eloquent\Model;
 
 class Destino extends Model
 {
-    protected $table = 'destination';
+    protected $table = 'destination';  // ← SINGULAR
 
     protected $fillable = [
+        // Campos originales en inglés
         'name',
         'slug',
         'country',
@@ -19,7 +20,13 @@ class Destino extends Model
         'gallery',
         'highlights',
         'best_time_to_visit',
-        'is_active'
+        'is_active',
+        // Campos nuevos en español
+        'nombre',
+        'descripcion',
+        'ubicacion',
+        'imagen_url',
+        'categoria_id'
     ];
 
     protected $casts = [
@@ -27,6 +34,12 @@ class Destino extends Model
         'highlights' => 'array',
         'is_active' => 'boolean'
     ];
+
+    // Relación: Un destino pertenece a una categoría
+    public function categoria()
+    {
+        return $this->belongsTo(Categoria::class, 'categoria_id');
+    }
 
     // Relación: Un destino tiene muchos paquetes
     public function paquetes()
@@ -38,5 +51,11 @@ class Destino extends Model
     public function fotos()
     {
         return $this->hasMany(Foto::class, 'destination_id');
+    }
+
+    // Relación: Un destino tiene muchos comentarios
+    public function comentarios()
+    {
+        return $this->hasMany(Comentario::class, 'destination_id');
     }
 }
