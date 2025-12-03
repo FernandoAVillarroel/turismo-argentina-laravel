@@ -1,19 +1,18 @@
 <template>
   <div class="home">
     <!-- Hero Section -->
-    <section class="hero">
-     <div class="hero-content">
-  <img src="/images/logo.png" alt="Turismo Argentina" class="hero-logo">
-  <h1 class="hero-title">Descubrí la Magia de Argentina</h1>
-        <p class="hero-subtitle">
-          Desde las majestuosas Cataratas del Iguazú hasta los glaciares patagónicos.
-          Tu próxima aventura comienza aquí.
-        </p>
-        <button @click="scrollToDestinos" class="hero-button">
-          Explorar Destinos
-        </button>
-      </div>
-    </section>
+   <section class="hero">
+  <div class="hero-content">
+    <h1 class="hero-title">Descubrí la Magia de Argentina</h1>
+    <p class="hero-subtitle">
+      Desde las majestuosas Cataratas del Iguazú hasta los glaciares patagónicos.
+      Tu próxima aventura comienza aquí.
+    </p>
+    <button @click="scrollToDestinos" class="hero-button">
+      Explorar Destinos
+    </button>
+  </div>
+</section>
 
     <!-- Destinos Destacados -->
     <section class="destinos-section" ref="destinosSection">
@@ -474,22 +473,6 @@ export default {
   font-size: 1.2em;
 }
 
-/* Hero Logo */
-.hero-logo {
-  width: 120px;
-  height: 120px;
-  margin-bottom: 20px;
-  filter: drop-shadow(0 4px 8px rgba(0,0,0,0.3));
-  animation: float 3s ease-in-out infinite;
-}
 
-@keyframes float {
-  0%, 100% {
-    transform: translateY(0px);
-  }
-  50% {
-    transform: translateY(-10px);
-  }
-}
   
 </style>
