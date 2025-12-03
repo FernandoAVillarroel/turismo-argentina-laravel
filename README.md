@@ -12,13 +12,17 @@ Aplicación web full-stack para explorar destinos turísticos de Argentina, con 
 ## 📸 Screenshots
 
 ### Página de Inicio
-![Home Page](docs/screenshots/home.png)
+<img width="1908" height="1038" alt="Screenshot_285" src="https://github.com/user-attachments/assets/69bfdebf-abb3-4ce7-8a6d-02aec4b16f2e" />
+
 
 ### Listado de Destinos
-![Destinos](docs/screenshots/destinos.png)
+<img width="1885" height="1039" alt="Screenshot_286" src="https://github.com/user-attachments/assets/4f7bfd8b-a735-40f3-b977-411cdef7da94" />
+
+<img width="1895" height="1039" alt="Screenshot_287" src="https://github.com/user-attachments/assets/1c27b07f-40b3-4f77-88a5-17c96c870177" />
 
 ### Detalle de Destino
-![Detalle](docs/screenshots/detalle.png)
+<img width="1802" height="1036" alt="Screenshot_289" src="https://github.com/user-attachments/assets/440c2e07-5a57-47ff-8272-8d9058802488" />
+
 
 ---
 
