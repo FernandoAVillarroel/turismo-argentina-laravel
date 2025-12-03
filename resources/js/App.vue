@@ -2,7 +2,13 @@
   <div id="turismo-app">
     <header class="header">
       <div class="header-content">
-        <h1 class="logo">🏞️ Turismo Argentina</h1>
+        <!-- Logo + Nombre -->
+        <router-link to="/" class="logo-container">
+          <img src="/images/logo.png" alt="Turismo Argentina" class="logo-image">
+          <h1 class="logo">Turismo Argentina</h1>
+        </router-link>
+        
+        <!-- Navegación -->
         <nav class="nav">
           <router-link to="/" class="nav-link">Inicio</router-link>
           <router-link to="/destinos" class="nav-link">Destinos</router-link>
@@ -62,11 +68,34 @@ body {
   align-items: center;
 }
 
+/* Logo Container */
+.logo-container {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  text-decoration: none;
+  transition: transform 0.3s ease;
+}
+
+.logo-container:hover {
+  transform: scale(1.05);
+}
+
+/* Logo Image */
+.logo-image {
+  width: 50px;
+  height: 50px;
+  object-fit: contain;
+  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
+}
+
+/* Logo Text */
 .logo {
   color: white;
   font-size: 1.8em;
   font-weight: bold;
   margin: 0;
+  text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
 }
 
 .nav {
@@ -111,5 +140,32 @@ body {
 
 .footer p {
   margin: 0;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .header-content {
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .logo-image {
+    width: 40px;
+    height: 40px;
+  }
+
+  .logo {
+    font-size: 1.4em;
+  }
+
+  .nav {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .nav-link {
+    padding: 10px 16px;
+    font-size: 0.9em;
+  }
 }
 </style>
