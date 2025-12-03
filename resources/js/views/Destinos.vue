@@ -104,14 +104,14 @@ const cargarDatos = async () => {
       axios.get('http://localhost:8000/api/categorias')
     ]);
     
-    // Verificar que sean arrays
-    destinos.value = Array.isArray(destinosRes.data) ? destinosRes.data : [];
+    console.log('🔍 RESPUESTA API:', destinosRes.data);
+    console.log('🔍 DESTINOS:', destinosRes.data.data);
+    
+    destinos.value = Array.isArray(destinosRes.data.data) ? destinosRes.data.data : [];
     categorias.value = Array.isArray(categoriasRes.data) ? categoriasRes.data : [];
     
   } catch (error) {
     console.error('Error cargando datos:', error);
-    destinos.value = [];
-    categorias.value = [];
   } finally {
     loading.value = false;
   }

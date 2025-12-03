@@ -18,33 +18,33 @@
     <section class="destinos-section" ref="destinosSection">
       <h2 class="section-title">✨ Destinos Destacados</h2>
       <p class="section-subtitle">Los lugares más increíbles de Argentina te esperan</p>
-      
+
       <div v-if="loading" class="loading">
         <div class="spinner"></div>
         <p>Cargando destinos...</p>
       </div>
 
       <div v-else-if="destinos.length > 0" class="destinos-grid">
-        <div 
-          v-for="destino in destinos" 
-          :key="destino.id" 
+        <div
+          v-for="destino in destinos"
+          :key="destino.id"
           class="destino-card"
           @click="verDestino(destino.id)"
         >
           <div class="card-image">
-            <img 
-              :src="destino.featured_image || 'https://via.placeholder.com/400x300?text=' + destino.name" 
-              :alt="destino.name"
+            <img
+              :src="getImagenUrl(destino.imagen_url)"
+              :alt="destino.nombre"
             />
             <div class="card-overlay">
-              <span class="card-location">📍 {{ destino.city }}</span>
+              <span class="card-location">📍 {{ destino.ubicacion }}</span>
             </div>
           </div>
           <div class="card-content">
-            <h3 class="card-title">{{ destino.name }}</h3>
+            <h3 class="card-title">{{ destino.nombre }}</h3>
             <p class="card-description">{{ destino.short_description }}</p>
             <div class="card-footer">
-              <span class="card-country">🇦🇷 {{ destino.country }}</span>
+              <span class="card-country">🇦🇷 Argentina</span>
               <span class="card-link">Ver más →</span>
             </div>
           </div>
@@ -60,16 +60,16 @@
     <section class="paquetes-section">
       <h2 class="section-title">🎒 Paquetes Turísticos</h2>
       <p class="section-subtitle">Experiencias completas listas para reservar</p>
-      
+
       <div v-if="paquetes.length > 0" class="paquetes-grid">
-        <div 
-          v-for="paquete in paquetes" 
-          :key="paquete.id" 
+        <div
+          v-for="paquete in paquetes"
+          :key="paquete.id"
           class="paquete-card"
         >
           <div class="paquete-header">
             <span class="paquete-duration">⏱️ {{ paquete.duration_days }} días</span>
-            <span v-if="paquete.is_featured" class="paquete-badge">⭐ Destacado</span>
+            <span v-if="paquete.is_featured" class="paquete-badge">⭐</span>
           </div>
           <h3 class="paquete-title">{{ paquete.title }}</h3>
           <p class="paquete-description">{{ paquete.description }}</p>
@@ -130,6 +130,11 @@ export default {
       } finally {
         this.loading = false;
       }
+    },
+    getImagenUrl(url) {
+      if (!url) return 'https://via.placeholder.com/400x300?text=Sin+Imagen';
+      if (url.startsWith('http')) return url;
+      return `http://localhost:8000${url}`;
     },
     verDestino(id) {
       this.$router.push(`/destinos/${id}`);
